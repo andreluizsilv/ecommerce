@@ -1,4 +1,5 @@
 from django.shortcuts import render
+from .models import *
 
 # Create your views here.
 def homepage(request):
@@ -6,7 +7,9 @@ def homepage(request):
 
 
 def loja(request):
-    return render(request, 'loja.html')
+    produtos = Produto.objects.all()
+    contex = {'produtos': produtos}
+    return render(request, 'loja.html', contex)
 
 
 def sacola(request):
