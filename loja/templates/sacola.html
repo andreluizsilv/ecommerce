@@ -1,6 +1,9 @@
 {% extends 'base.html' %}
-
-{% block content%}
+{% load static %}
+{% block content %}
     <h1>Sacola</h1>
+
+    <a href="{% url 'checkout' %}">Checkout </a>
+
 {% endblock %}
 
