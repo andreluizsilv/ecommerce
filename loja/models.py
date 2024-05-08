@@ -10,16 +10,16 @@ class Cliente(models.Model):
     usuario = models.OneToOneField(User, null=True, blank=True, on_delete=models.CASCADE)
 
 class Categoria(models.Model): # Categorias (Masculino, Feminino, Infantil)
-    nome_categoria = models.CharField(max_length=200, null=True, blank=True)
+    nome = models.CharField(max_length=200, null=True, blank=True)
 
     def __str__(self):
-        return str(self.nome_categoria)
+        return str(self.nome)
 
 class Tipo(models.Model): # Tipos (Camisa, Camiseta, Bermuda, Calça)
-    nome_tipo = models.CharField(max_length=200, null=True, blank=True)
+    nome = models.CharField(max_length=200, null=True, blank=True)
 
     def __str__(self):
-        return str(self.nome_tipo)
+        return str(self.nome)
 
 class Produto(models.Model):
     imagem =  models.ImageField(null=True, blank=True)
@@ -58,5 +58,10 @@ class ItensPedido(models.Model):
     quantidade = models.IntegerField(default=0)
     pedido = models.ForeignKey(Pedido, null=True, blank=True, on_delete=models.SET_NULL)
 
+class Banner(models.Model):
+    imagem_baner = models.ImageField(null=True, blank=True)
+    links_destino = models.CharField(max_length=400, null=True, blank=True)
+    ativo = models.BooleanField(default=False)
 
-
+    def __str__(self):
+        return str(f'{self.links_destino} - Ativo: {self.ativo}')

@@ -3,13 +3,17 @@ from .models import *
 
 # Create your views here.
 def homepage(request):
-    return render(request, 'homepage.html')
+    banners = Banner.objects.filter(ativo=True)
+    context = {'banners': banners}
+    return render(request, 'homepage.html', context)
 
 
-def loja(request):
-    produtos = Produto.objects.all()
-    contex = {'produtos': produtos}
-    return render(request, 'loja.html', contex)
+def loja(request, nome_categoria=None):
+    produtos = Produto.objects.filter(ativo=True)
+    if nome_categoria:
+        produtos = produtos.filter(categoria__nome=nome_categoria)
+    context = {"produtos": produtos}
+    return render(request, 'loja.html', context)
 
 
 def sacola(request):

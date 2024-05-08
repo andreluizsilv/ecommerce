@@ -3,5 +3,10 @@
 
 {% block content %}
     <h1>Homepage</h1>
+
+    {% for banner in banners %}
+        <a href="{% url 'loja' %}{{ banner.links_destino }}">
+        <img src="{{ banner.imagem_baner.url }}"></a>
+    {% endfor %}
 {% endblock %}
 
