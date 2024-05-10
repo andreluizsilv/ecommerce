@@ -30,12 +30,24 @@ class Produto(models.Model):
     tipo = models.ForeignKey(Tipo, null=True, blank=True, on_delete=models.SET_NULL)
 
     def __str__(self):
-        return str(f'Nome: {self.nome_produto} -> Categoria: {self.categoria} -> Tipo: {self.tipo} -> Preço: {self.preco}')
+        return str(f'Nome: {self.nome_produto} -> Categoria: {self.categoria} -> Tipo: {self.tipo} -> Preço: {self.preco} ')
+
+
+class Cor (models.Model):
+    nome = models.CharField(max_length=200, null=True, blank=True)
+    codigo = models.CharField(max_length=200, null=True, blank=True)
+
+    def __str__(self):
+        return str(self.nome)
+
 class ItemEstoque(models.Model):
     produto = models.ForeignKey(Produto, null=True, blank=True, on_delete=models.SET_NULL)
-    cor = models.CharField(max_length=200, null=True, blank=True)
+    cor = models.ForeignKey(Cor, null=True, blank=True, on_delete=models.SET_NULL)
     tamanho = models.CharField(max_length=200, null=True, blank=True)
     quantidade = models.IntegerField(default=0)
+
+    def __str__(self):
+        return str(f'{self.produto.nome_produto}, Tamanho: {self.tamanho}, Cor: {self.cor}')
 
 class Endereco(models.Model):
     rua = models.CharField(max_length=400, null=True, blank=True)
