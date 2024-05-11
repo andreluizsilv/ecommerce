@@ -11,11 +11,26 @@
         Produto: {{ item.item_estoque.produto.nome_produto }};
         Cor: {{ item.item_estoque.cor.nome }};
         Tamanho: {{ item.item_estoque.tamanho }}
-        Quantidade: {{ item.quantidade }}
+        <div style="display: flex;">
+        Quantidade:
+        <form method="POST" action="{% url 'remover_sacola' item.item_estoque.produto.id %}">
+        {% csrf_token %}
+            <input type="hidden"name="tamanho" value="{{ item.item_estoque.tamanho }}">
+            <input type="hidden"name="cor" value="{{ item.item_estoque.cor.id }}">
+        <button type="submit">-</button>
+        </form>
+        {{ item.quantidade }}
+        <form method="POST" action="{% url 'adicionar_sacola' item.item_estoque.produto.id %}">
+        {% csrf_token %}
+            <input type="hidden"name="tamanho" value="{{ item.item_estoque.tamanho }}">
+            <input type="hidden"name="cor" value="{{ item.item_estoque.cor.id }}">
+        <button type="submit">+</button>
+        </form>
+        </div>
         Preço Unitario: R${{item.item_estoque.produto.preco}}
         Preço Total: R${{item.preco_total }}
-
     </p>
+    <hr>
     {% endfor %}
     <a href="{% url 'checkout' %}">Checkout </a>
 
