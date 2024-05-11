@@ -12,4 +12,5 @@ urlpatterns = [
     path('minhaconta/', minha_conta, name='minha_conta'),
     path('login/', login, name='login'),
     path('checkout/', checkout, name='checkout'),
+    path('adicionarsacola/<int:id_produto>/', adicionar_sacola, name='adicionar_sacola'),
 ]

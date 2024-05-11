@@ -1,4 +1,4 @@
-from django.shortcuts import render
+from django.shortcuts import render, redirect
 from .models import *
 
 # Create your views here.
@@ -16,14 +16,13 @@ def loja(request, nome_categoria=None):
     return render(request, 'loja.html', context)
 
 
-def ver_produto(request, id_produto,id_cor=None):
+def ver_produto(request, id_produto, id_cor=None):
     tem_estoque = False
     cores = {}
     tamanhos = {}
     cor_selecionada = None
     if id_cor:
-        cor =Cor.objects.get(id=id_cor)
-        cor_selecionada = cor.nome
+        cor_selecionada =Cor.objects.get(id=id_cor)
     produto = Produto.objects.get(id=id_produto)
     itens_estoque = ItemEstoque.objects.filter(produto=produto, quantidade__gt=0)
     if len(itens_estoque) > 0:
@@ -34,13 +33,29 @@ def ver_produto(request, id_produto,id_cor=None):
             tamanhos = {item.tamanho for item in itens_estoque}
     context = {
         'produto': produto,
-        'itens_estoque': itens_estoque,
         'tem_estoque': tem_estoque,
         'cores': cores,
         'tamanhos': tamanhos,
-        'cor_selecionada':cor_selecionada
+        'cor_selecionada': cor_selecionada
     }
     return render(request, 'ver_produto.html', context)
+
+
+def adicionar_sacola(request, id_produto):
+    if request.method == "POST" and id_produto:
+        dados = request.POST.dict()
+        tamanho = dados.get("tamanho")
+        print(dados)
+        id_cor = dados.get("cor")
+        if not tamanho:
+            return redirect('loja')
+        # pegar o cliente
+        # criar o Pedido ou pegar o Pedido que está em aberto
+        return redirect('sacola')
+    else:
+        return redirect('loja')
+
+
 
 
 def sacola(request):
