@@ -45,21 +45,34 @@ def adicionar_sacola(request, id_produto):
     if request.method == "POST" and id_produto:
         dados = request.POST.dict()
         tamanho = dados.get("tamanho")
-        print(dados)
         id_cor = dados.get("cor")
         if not tamanho:
             return redirect('loja')
-        # pegar o cliente
+        if request.user.is_authenticated:
+            cliente = request.user.cliente
+        else:
+            return redirect('loja')
+        pedido, criado = Pedido.objects.get_or_create(cliente=cliente, finalizado=False)
+        item_estoque = ItemEstoque.objects.get(produto__id=id_produto, tamanho=tamanho, cor__id=id_cor)
+        item_pedido, criado = ItensPedido.objects.get_or_create(item_estoque=item_estoque, pedido=pedido)
+        item_pedido.quantidade += 1
+        item_pedido.save()
         # criar o Pedido ou pegar o Pedido que está em aberto
         return redirect('sacola')
     else:
         return redirect('loja')
 
 
-
+def remover_sacola(request):
+    return redirect('sacola')
 
 def sacola(request):
-    return render(request, 'sacola.html')
+    if request.user.is_authenticated:
+        cliente = request.user.cliente
+    pedido, criado = Pedido.objects.get_or_create(cliente=cliente, finalizado=False)
+    itens_pedido = ItensPedido.objects.filter(pedido=pedido)
+    context = {'itens_pedido': itens_pedido, 'pedido': pedido}
+    return render(request, 'sacola.html', context)
 
 
 def checkout(request):
@@ -73,4 +86,4 @@ def minha_conta(request):
 def login(request):
     return render(request, 'usuario/login.html')
 
-
+# TODO sempre que o usuario criar uma conta em nosso site a gente vai criar um cliente para ele

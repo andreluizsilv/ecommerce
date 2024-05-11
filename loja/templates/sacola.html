@@ -1,8 +1,22 @@
 {% extends 'base.html' %}
 {% load static %}
 {% block content %}
-    <h1>Sacola</h1>
+    <h3>Sacola</h3>
+    <h4>Número do Pedido: {{pedido.id }}</h4>
+    Total de Produtos: {{ pedido.qtde_total }}<br>
+    Total das Compras: R${{pedido.preco_total }}
+    {% for item in itens_pedido %}
+    <p>
+        <img src="{{ item.item_estoque.produto.imagem.url }}" width="50" height="70">
+        Produto: {{ item.item_estoque.produto.nome_produto }};
+        Cor: {{ item.item_estoque.cor.nome }};
+        Tamanho: {{ item.item_estoque.tamanho }}
+        Quantidade: {{ item.quantidade }}
+        Preço Unitario: R${{item.item_estoque.produto.preco}}
+        Preço Total: R${{item.preco_total }}
 
+    </p>
+    {% endfor %}
     <a href="{% url 'checkout' %}">Checkout </a>
 
 {% endblock %}
