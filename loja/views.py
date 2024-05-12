@@ -1,5 +1,6 @@
 from django.shortcuts import render, redirect
 from .models import *
+import uuid
 
 # Create your views here.
 def homepage(request):
@@ -48,17 +49,23 @@ def adicionar_sacola(request, id_produto):
         id_cor = dados.get("cor")
         if not tamanho:
             return redirect('loja')
+        # pegar o cliente
+        resposta = redirect('sacola')
         if request.user.is_authenticated:
             cliente = request.user.cliente
         else:
-            return redirect('loja')
+            if request.COOKIES.get("id_sessao"):
+                id_sessao = request.COOKIES.get("id_sessao")
+            else:
+                id_sessao = str(uuid.uuid4())
+                resposta.set_cookie(key="id_sessao", value=id_sessao)
+            cliente, criado = Cliente.objects.get_or_create(id_sessao=id_sessao)
         pedido, criado = Pedido.objects.get_or_create(cliente=cliente, finalizado=False)
         item_estoque = ItemEstoque.objects.get(produto__id=id_produto, tamanho=tamanho, cor__id=id_cor)
         item_pedido, criado = ItensPedido.objects.get_or_create(item_estoque=item_estoque, pedido=pedido)
         item_pedido.quantidade += 1
         item_pedido.save()
-        # criar o Pedido ou pegar o Pedido que está em aberto
-        return redirect('sacola')
+        return resposta
     else:
         return redirect('loja')
 
@@ -87,9 +94,16 @@ def remover_sacola(request, id_produto):
 def sacola(request):
     if request.user.is_authenticated:
         cliente = request.user.cliente
+    else:
+        if request.COOKIES.get("id_sessao"):
+            id_sessao = request.COOKIES.get("id_sessao")
+            cliente, criado = Cliente.objects.get_or_create(id_sessao=id_sessao)
+        else:
+            context = {"cliente_existente": False, "itens_pedido": None, "pedido": None}
+            return render(request, 'sacola.html', context)
     pedido, criado = Pedido.objects.get_or_create(cliente=cliente, finalizado=False)
     itens_pedido = ItensPedido.objects.filter(pedido=pedido)
-    context = {'itens_pedido': itens_pedido, 'pedido': pedido}
+    context = {"itens_pedido": itens_pedido, "pedido": pedido, "cliente_existente": True}
     return render(request, 'sacola.html', context)
 
 
