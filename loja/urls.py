@@ -14,4 +14,6 @@ urlpatterns = [
     path('checkout/', checkout, name='checkout'),
     path('adicionarsacola/<int:id_produto>/', adicionar_sacola, name='adicionar_sacola'),
     path('removersacola/<int:id_produto>/', remover_sacola, name='remover_sacola'),
+    path('adicionarendereco/', adicionar_endereco, name='adicionar_endereco'),
 ]
+

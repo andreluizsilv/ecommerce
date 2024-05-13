@@ -3,5 +3,41 @@
 
 {% block content %}
     <h1>checkout</h1>
+        <a href="{% url 'sacola' %}">Voltar para a Sacola </a>
+
+
+    <h4>Número do Pedido: {{pedido.id }}</h4>
+    <p>Total de Produtos: {{ pedido.qtde_total }}</p>
+    <p>Total das Compras: R${{pedido.preco_total }}</p>
+    <form method="POST" action="">
+    {% csrf_token %}
+    <h3>Selecione o endereço de entrega</h3>
+        <a href="{% url 'adicionar_endereco' %}">Adicionar Endereço de Entrega</a>
+    {% for endereco in enderecos %}
+    <input type="radio" name="endereco" value="{{ endereco.id }}">
+    <label for="{{ endereco.id }}">
+        {{ endereco.rua }},
+        {{ endereco.numero }} -
+        {{ endereco.complemento }} -
+        {{ endereco.cidade }} -
+        {{ endereco.estado }} -
+        {{ endereco.cep}}.
+    </label>
+    <br>
+    {% endfor %}
+    {% if not request.user.is_authenticated %}
+        <hr>
+    <h4>Preencha seu email para finalizar o pedido</h4>
+    <input type="email" name="email" placeholder="email">
+    {% endif %}
+    <hr>
+    <input type="hidden" value="{{pedido.preco_total }}" name="total">
+    <button type="submit"> Finalizar Pedido R$ {{pedido.preco_total }}</button>
+
+</form>
+
+
+
+
 {% endblock %}
 
