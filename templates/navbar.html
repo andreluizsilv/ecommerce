@@ -7,4 +7,17 @@
      <a href="{% url 'sacola' %}">Sacola </a>
      <img src="{% static 'images/sacola1.png' %}" width="30" height="30">
      {{ qtde_prod_sacola }}
+
+     <div style="display: flex;">
+         {% for categoria in categorias %}
+         <div>
+             <a href="{% url 'loja'%}{{ categoria.slug }}">{{ categoria.nome }}:</a>
+            <br>
+            {% for tipo in tipos %}
+                <a href="{% url 'loja' %}{{ categoria.slug }}-{{ tipo.slug }} ">{{ tipo.nome }}</a>
+            {% endfor %}
+         </div>
+         {% endfor %}
+
+     </div>
  </nav>

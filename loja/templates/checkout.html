@@ -13,6 +13,7 @@
     {% csrf_token %}
     <h3>Selecione o endereço de entrega</h3>
         <a href="{% url 'adicionar_endereco' %}">Adicionar Endereço de Entrega</a>
+        <br>
     {% for endereco in enderecos %}
     <input type="radio" name="endereco" value="{{ endereco.id }}">
     <label for="{{ endereco.id }}">

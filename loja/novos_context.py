@@ -14,3 +14,9 @@ def sacola(request):
     for item in itens_pedido:
         qtde_prod_sacola += item.quantidade
     return {'qtde_prod_sacola': qtde_prod_sacola}
+
+
+def categoria_tipos(request):
+    categorias = Categoria.objects.all()
+    tipos = Tipo.objects.all()
+    return {'categorias': categorias, 'tipos': tipos}

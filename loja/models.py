@@ -14,12 +14,15 @@ class Cliente(models.Model):
 
 class Categoria(models.Model): # Categorias (Masculino, Feminino, Infantil)
     nome = models.CharField(max_length=200, null=True, blank=True)
+    slug = models.CharField(max_length=200, null=True, blank=True)
+
 
     def __str__(self):
         return str(self.nome)
 
 class Tipo(models.Model): # Tipos (Camisa, Camiseta, Bermuda, Calça)
     nome = models.CharField(max_length=200, null=True, blank=True)
+    slug = models.CharField(max_length=200, null=True, blank=True)
 
     def __str__(self):
         return str(self.nome)
@@ -59,10 +62,10 @@ class Endereco(models.Model):
     cep = models.CharField(max_length=200, null=True, blank=True)
     cidade = models.CharField(max_length=200, null=True, blank=True)
     estado = models.CharField(max_length=200, null=True, blank=True)
-    cliente_endereco = models.ForeignKey(Cliente, null=True, blank=True, on_delete=models.SET_NULL)
+    cliente = models.ForeignKey(Cliente, null=True, blank=True, on_delete=models.SET_NULL)
 
     def __str__(self):
-        return str(f'{self.cliente_endereco} - {self.rua} - {self.cidade} - {self.estado} - {self.cep}')
+        return str(f'{self.cliente} - {self.rua} - {self.cidade} - {self.estado} - {self.cep}')
 
 class Pedido(models.Model):
     cliente = models.ForeignKey(Cliente, null=True, blank=True, on_delete=models.SET_NULL)
