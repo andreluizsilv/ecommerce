@@ -4,6 +4,7 @@
 {% block content %}
     <h3>Loja</h3>
 <form method="POST" action="">
+    {% csrf_token %}
     <p>Preço</p>
     <input type="number" name="preco_minimo" value={{ minimo }}>
     <input type="number" name="preco_maximo" value={{ maximo }}>

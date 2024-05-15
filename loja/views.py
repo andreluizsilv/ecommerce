@@ -13,6 +13,14 @@ def homepage(request):
 def loja(request, filtro=None):
     produtos = Produto.objects.filter(ativo=True)
     produtos = filtrar_produtos(produtos, filtro)
+    if request.method == 'POST':
+        dados = request.POST.dict()
+        produtos = produtos.filter(preco__gte=dados.get('preco_minimo'), preco__lte=dados.get('preco_maximo'))
+        if 'tamanho' in dados:
+            itens = ItemEstoque.objects.filter(produto__in=produtos, tamanho=dados.get('tamanho'))
+            ids_produtos = itens.values_list('produto', flat=True).distinct()
+            produtos = produtos.filter(id__in=ids_produtos)
+        print(dados)
     itens = ItemEstoque.objects.filter(quantidade__gt=0, produto__in=produtos)
     tamanhos = itens.values_list('tamanho', flat=True).distinct()
     minimo, maximo = preco_minimo_maximo(produtos)
