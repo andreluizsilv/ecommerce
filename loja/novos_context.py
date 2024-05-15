@@ -17,6 +17,6 @@ def sacola(request):
 
 
 def categoria_tipos(request):
-    categorias = Categoria.objects.all()
-    tipos = Tipo.objects.all()
-    return {'categorias': categorias, 'tipos': tipos}
+    categorias_navbar = Categoria.objects.all()
+    tipos_navbar = Tipo.objects.all()
+    return {'categorias_navbar': categorias_navbar, 'tipos_navbar': tipos_navbar}

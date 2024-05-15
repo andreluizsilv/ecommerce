@@ -13,6 +13,7 @@ def homepage(request):
 def loja(request, filtro=None):
     produtos = Produto.objects.filter(ativo=True)
     produtos = filtrar_produtos(produtos, filtro)
+    # aplicar os filtros no formulario
     if request.method == 'POST':
         dados = request.POST.dict()
         produtos = produtos.filter(preco__gte=dados.get('preco_minimo'), preco__lte=dados.get('preco_maximo'))
@@ -20,12 +21,22 @@ def loja(request, filtro=None):
             itens = ItemEstoque.objects.filter(produto__in=produtos, tamanho=dados.get('tamanho'))
             ids_produtos = itens.values_list('produto', flat=True).distinct()
             produtos = produtos.filter(id__in=ids_produtos)
-        print(dados)
+        if 'categoria' in dados:
+            produtos = produtos.filter(categoria__slug=dados.get('categoria'))
+        if 'tipo' in dados:
+            produtos = produtos.filter(tipo__slug=dados.get('tipo'))
     itens = ItemEstoque.objects.filter(quantidade__gt=0, produto__in=produtos)
     tamanhos = itens.values_list('tamanho', flat=True).distinct()
+    ids_categorias = produtos.values_list('categoria', flat=True).distinct()
+    categorias = Categoria.objects.filter(id__in=ids_categorias)
     minimo, maximo = preco_minimo_maximo(produtos)
 
-    context = {"produtos": produtos, "minimo": minimo, "maximo": maximo, "tamanhos": tamanhos}
+    context = {"produtos": produtos,
+               "minimo": minimo,
+               "maximo": maximo,
+               "tamanhos": tamanhos,
+               'categorias': categorias
+               }
     return render(request, 'loja.html', context)
 
 
