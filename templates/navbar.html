@@ -2,11 +2,6 @@
  <nav>
      <a href="{% url 'homepage' %}">Reserva</a>
      <a href="{% url 'loja' %}">Loja</a>
-     <a href="{% url 'login' %}">Login</a>
-     <a href="{% url 'minha_conta' %}">Minha Conta</a>
-     <a href="{% url 'sacola' %}">Sacola </a>
-     <img src="{% static 'images/sacola1.png' %}" width="30" height="30">
-     {{ qtde_prod_sacola }}
 
      <div style="display: flex;">
          {% for categoria in categorias_navbar %}
@@ -20,4 +15,15 @@
          {% endfor %}
 
      </div>
+
+     {% if request.user.is_authenticated %}
+        <a href="{% url 'minha_conta' %}">Minha Conta</a>
+     {% else %}
+        <a href="{% url 'login' %}">Login</a>
+     {% endif %}
+     <a href="{% url 'sacola' %}">Sacola </a>
+     <img src="{% static 'images/sacola1.png' %}" width="30" height="30">
+     {{ qtde_prod_sacola }}
+
+
  </nav>
