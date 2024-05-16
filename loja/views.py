@@ -86,7 +86,7 @@ def adicionar_sacola(request, id_produto):
                 id_sessao = str(uuid.uuid4())
                 resposta.set_cookie(key="id_sessao", value=id_sessao, max_age=60*60*24*30)
             cliente, criado = Cliente.objects.get_or_create(id_sessao=id_sessao)
-        pedido, criado = Pedido.objects.get_or_create(cliente=cliente, finalizado=False)
+        pedido, criado = Pedido.objects.get_or_create(cliente=cliente, finalizado=True)
         item_estoque = ItemEstoque.objects.get(produto__id=id_produto, tamanho=tamanho, cor__id=id_cor)
         item_pedido, criado = ItensPedido.objects.get_or_create(item_estoque=item_estoque, pedido=pedido)
         item_pedido.quantidade += 1
@@ -111,7 +111,7 @@ def remover_sacola(request, id_produto):
                 cliente, criado = Cliente.objects.get_or_create(id_sessao=id_sessao)
             else:
                 return redirect('loja')
-        pedido, criado = Pedido.objects.get_or_create(cliente=cliente, finalizado=False)
+        pedido, criado = Pedido.objects.get_or_create(cliente=cliente, finalizado=True)
         item_estoque = ItemEstoque.objects.get(produto__id=id_produto, tamanho=tamanho, cor__id=id_cor)
         item_pedido, criado = ItensPedido.objects.get_or_create(item_estoque=item_estoque, pedido=pedido)
         item_pedido.quantidade -= 1
@@ -146,7 +146,7 @@ def checkout(request):
             cliente, criado = Cliente.objects.get_or_create(id_sessao=id_sessao)
         else:
             return redirect('loja')
-    pedido, criado = Pedido.objects.get_or_create(cliente=cliente, finalizado=False)
+    pedido, criado = Pedido.objects.get_or_create(cliente=cliente, finalizado=True)
     enderecos = Endereco.objects.filter(cliente=cliente)
     context = {"pedido": pedido, "enderecos": enderecos}
     return render(request, 'checkout.html', context)

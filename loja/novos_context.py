@@ -9,7 +9,7 @@ def sacola(request):
             cliente, criado = Cliente.objects.get_or_create(id_sessao=id_sessao)
         else:
             return {'qtde_prod_sacola': qtde_prod_sacola}
-    pedido, criado = Pedido.objects.get_or_create(cliente=cliente, finalizado=False)
+    pedido, criado = Pedido.objects.get_or_create(cliente=cliente, finalizado=True)
     itens_pedido = ItensPedido.objects.filter(pedido=pedido)
     for item in itens_pedido:
         qtde_prod_sacola += item.quantidade
