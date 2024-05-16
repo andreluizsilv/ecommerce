@@ -39,6 +39,11 @@ class Produto(models.Model):
         return str(f'Nome: {self.nome_produto} -> Categoria: {self.categoria} -> Tipo: {self.tipo} -> Preço: {self.preco} ')
 
 
+    #def total_vendas(self):
+     #   itens = ItensPedido.objects.filter(pedido__finalizado=True, item_estoque__produto=self.id)
+      #  total = sum([item.quantidade for item in itens])
+       # return total
+
 class Cor (models.Model):
     nome = models.CharField(max_length=200, null=True, blank=True)
     codigo = models.CharField(max_length=200, null=True, blank=True)
