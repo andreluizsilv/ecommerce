@@ -3,7 +3,11 @@
 
 {% block content%}
     <h3>Faça seu Login</h3>
-    <form method="POST" action="">
+
+    {% if erro %}
+    <h4> Informações Invalida! Tente novamente ou Crie uma Conta.</h4>
+    {% endif %}
+    <form method="POST" action="{% url 'fazer_login' %}">
         {% csrf_token %}
             <input type="email" name="email" placeholder="Email">
             <input type="password" name="senha" placeholder="Senha">
