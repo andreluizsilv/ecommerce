@@ -3,8 +3,10 @@ from .models import *
 import uuid
 from .utils import filtrar_produtos, preco_minimo_maximo, ordenar_produtos
 from django.contrib.auth import login, logout, authenticate
+from django.contrib.auth.decorators import login_required
 from django.core.validators import validate_email
 from django.core.exceptions import ValidationError
+
 
 # Create your views here.
 def homepage(request):
@@ -176,6 +178,7 @@ def adicionar_endereco(request):
         context = {}
         return render(request, 'adicionar_endereco.html', context)
 
+@login_required
 def minha_conta(request):
     return render(request, 'usuario/minha_conta.html')
 
@@ -250,6 +253,7 @@ def criar_conta(request):
     context = {"erro": erro}
     return render(request, "usuario/criar_conta.html", context)
 
+@login_required
 def fazer_lougout(request):
     logout(request)
     return redirect('fazer_login')
