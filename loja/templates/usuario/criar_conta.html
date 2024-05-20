@@ -1,32 +1,45 @@
 {% extends 'base.html' %}
 {% load static %}
 
-{% block content%}
-
-{% if erro == "preenchimento" %}
-<p>Preencha todas as informações do formulário corretamente para criar uma conta</p>
-{% endif %}
-
-{% if erro == "email_invalido" %}
-<p>Seu e-mail está inválido, tente novamente com outro e-mail</p>
-{% endif %}
-
-{% if erro == "usuario_existente" %}
-<p>Já existe um usuário com esse e-mail, <a href="{% url 'fazer_login' %}">faça login</a></p>
-{% endif %}
-
-{% if erro == "senhas_diferentes" %}
-<p>Senha e Confirmação de Senha não são iguais, tente novamente</p>
-{% endif %}
+{% block content %}
+<div class="form-container">
     <h3>Preencha seus dados para criar uma conta</h3>
-    <form method="POST" action="{% url 'criar_conta' %}">
+
+    <!-- Mensagens de erro -->
+    {% if erro %}
+        <div class="error-message">
+            {% if erro == "preenchimento" %}
+                <p>Preencha todas as informações do formulário corretamente para criar uma conta.</p>
+            {% elif erro == "email_invalido" %}
+                <p>Seu e-mail está inválido, tente novamente com outro e-mail.</p>
+            {% elif erro == "usuario_existente" %}
+                <p>Já existe um usuário com esse e-mail, <a href="{% url 'fazer_login' %}">faça login</a>.</p>
+            {% elif erro == "senhas_diferentes" %}
+                <p>Senha e Confirmação de Senha não são iguais, tente novamente.</p>
+            {% endif %}
+        </div>
+    {% endif %}
+
+    <!-- Formulário de criação de conta -->
+    <form method="POST" action="{% url 'criar_conta' %}" class="create-account-form">
         {% csrf_token %}
-            <input type="email" name="email" placeholder="Email">
-            <input type="password" name="senha" placeholder="Senha">
-            <input type="password" name="confimacao_senha" placeholder="Confirme sua Senha">
-            <button type="submit">Criar Conta</button>
-
+        <div class="form-group">
+            <label for="email">Email:</label>
+            <input type="email" id="email" name="email" placeholder="Email" required>
+        </div>
+        <div class="form-group">
+            <label for="senha">Senha:</label>
+            <input type="password" id="senha" name="senha" placeholder="Senha" required>
+        </div>
+        <div class="form-group">
+            <label for="confirmacao_senha">Confirme sua Senha:</label>
+            <input type="password" id="confirmacao_senha" name="confirmacao_senha" placeholder="Confirme sua Senha" required>
+        </div>
+        <button type="submit" class="btn-submit">Criar Conta</button>
     </form>
-    <a href="{% url 'fazer_login' %}">Já tem conta? Fazer uma Conta</a>
-{% endblock %}
 
+    <div class="login-link">
+        <a href="{% url 'fazer_login' %}">Já tem conta? Fazer login</a>
+    </div>
+</div>
+{% endblock %}
