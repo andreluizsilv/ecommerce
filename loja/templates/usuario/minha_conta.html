@@ -28,8 +28,8 @@
     <form method="POST" action="{% url 'minha_conta' %}">
     {% csrf_token %}
         <input type="text" name="nome" placeholder="Nome Completo"
-        {% if request.user.cliente.nome %}
-            value="{{ request.user.cliente.nome }}"
+        {% if request.user.cliente.nome_cliente %}
+            value="{{ request.user.cliente.nome_cliente }}"
         {% endif %}>
         <input type="email" name="email" placeholder="Email" value="{{ request.user.email }}">
         <input type="number" name="telefone" placeholder="Telefone" value="{{ request.user.cliente.telefone }}">

@@ -6,6 +6,7 @@ from django.contrib.auth import login, logout, authenticate
 from django.contrib.auth.decorators import login_required
 from django.core.validators import validate_email
 from django.core.exceptions import ValidationError
+from datetime import datetime
 
 
 # Create your views here.
@@ -164,10 +165,52 @@ def checkout(request):
             return redirect('loja')
     pedido, criado = Pedido.objects.get_or_create(cliente=cliente, finalizado=True)
     enderecos = Endereco.objects.filter(cliente=cliente)
-    context = {"pedido": pedido, "enderecos": enderecos}
+    context = {"pedido": pedido, "enderecos": enderecos, 'erro': None}
     return render(request, 'checkout.html', context)
 
+def finalizar_pedido(request, id_pedido):
+    if request.method == 'POST':
+        erro = None
+        dados = request.POST.dict()
+        print(dados)
+        total = dados.get('total')
+        pedido = Pedido.objects.get(id=id_pedido)
+        if total != pedido.preco_total:
+            erro = 'preco'
+        print(dados)
+        if not 'endereco' in dados:
+            erro = 'endereco'
+        else:
+            endereco = dados.get('endereco')
+            pedido.endereco = endereco
 
+        if not request.user.is_authenticated:
+            email = dados.get('email')
+            try:
+                validate_email(email)
+            except ValidationError:
+                erro = 'email'
+            if not erro:
+                clientes = Cliente.objects.filter(email=email)
+                if clientes:
+                    pedido.cliente = clientes[0]
+                else:
+                    pedido.cliente.email = email
+                    pedido.cliente.save()
+        codigo_transacao = f'{pedido.id} - {datetime.now().timestamp()}'
+        pedido.codigo_transacao = codigo_transacao
+        pedido.save()
+
+        if erro:
+            enderecos = Endereco.objects.filter(cliente=pedido.cliente)
+            context = {'erro': erro, 'pedido': pedido, 'enderecos': enderecos}
+            return render(request, 'checkout.html', context)
+        else:
+            # TODO pagamento do Usuário
+            pass
+            return redirect('checkout',erro)
+    else:
+        return redirect('loja')
 def adicionar_endereco(request):
     if request.method == 'POST':
         if request.user.is_authenticated:
@@ -195,6 +238,7 @@ def minha_conta(request):
     alterado = False
     if request.method == 'POST':
         dados = request.POST.dict()
+        print(dados)
         if 'senha_atual' in dados:
             # está modificando a senha
             senha_atual = dados.get('senha_atual')
