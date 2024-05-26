@@ -21,6 +21,10 @@
      {% else %}
         <a href="{% url 'fazer_login' %}">Login</a>
      {% endif %}
+        <a href="{% url 'gerenciar_loja' %}">Gerenciar loja</a>
+     {% if equipe %}
+
+     {% endif %}
      <a href="{% url 'sacola' %}">Sacola </a>
      <img src="{% static 'images/sacola1.png' %}" width="30" height="30">
      {{ qtde_prod_sacola }}

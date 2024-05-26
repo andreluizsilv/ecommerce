@@ -1,7 +1,8 @@
 from django.shortcuts import render, redirect
+from django.urls import reverse
 from .models import *
 import uuid
-from .utils import filtrar_produtos, preco_minimo_maximo, ordenar_produtos
+from .utils import filtrar_produtos, preco_minimo_maximo, ordenar_produtos, enviar_email_compra
 from django.contrib.auth import login, logout, authenticate
 from django.contrib.auth.decorators import login_required
 from django.core.validators import validate_email
@@ -80,7 +81,7 @@ def adicionar_sacola(request, id_produto):
         dados = request.POST.dict()
         tamanho = dados.get("tamanho")
         id_cor = dados.get("cor")
-        if not tamanho:
+        if not tamanho or not id_cor:
             return redirect('loja')
 
         resposta = redirect('sacola')
@@ -95,12 +96,16 @@ def adicionar_sacola(request, id_produto):
             resposta.set_cookie(key="id_sessao", value=id_sessao, max_age=60 * 60 * 24 * 30)
 
         # Obtém ou cria um pedido não finalizado
-        pedido, criado = Pedido.objects.get_or_create(cliente=cliente, finalizado=False)
+        pedido, _ = Pedido.objects.get_or_create(cliente=cliente, finalizado=False)
 
-        item_estoque = ItemEstoque.objects.get(produto__id=id_produto, tamanho=tamanho, cor__id=id_cor)
-        item_pedido, criado = ItensPedido.objects.get_or_create(item_estoque=item_estoque, pedido=pedido)
-        item_pedido.quantidade += 1
-        item_pedido.save()
+        try:
+            item_estoque = ItemEstoque.objects.get(produto__id=id_produto, tamanho=tamanho, cor__id=id_cor)
+            item_pedido, criado = ItensPedido.objects.get_or_create(item_estoque=item_estoque, pedido=pedido)
+            item_pedido.quantidade += 1
+            item_pedido.save()
+        except ItemEstoque.DoesNotExist:
+            # Adicionar tratamento caso o item não exista
+            return redirect('loja')
 
         return resposta
     else:
@@ -148,7 +153,7 @@ def sacola(request):
             return render(request, 'sacola.html', context)
         cliente, _ = Cliente.objects.get_or_create(id_sessao=id_sessao)
 
-    pedido, _ = Pedido.objects.get_or_create(cliente=cliente, finalizado=True)
+    pedido, _ = Pedido.objects.get_or_create(cliente=cliente, finalizado=False)
     itens_pedido = ItensPedido.objects.filter(pedido=pedido)
 
     context = {"itens_pedido": itens_pedido, "pedido": pedido, "cliente_existente": True}
@@ -164,7 +169,7 @@ def checkout(request):
             cliente, criado = Cliente.objects.get_or_create(id_sessao=id_sessao)
         else:
             return redirect('loja')
-    pedido, criado = Pedido.objects.get_or_create(cliente=cliente, finalizado=True)
+    pedido, _ = Pedido.objects.get_or_create(cliente=cliente, finalizado=False)
     enderecos = Endereco.objects.filter(cliente=cliente)
     context = {"pedido": pedido, "enderecos": enderecos, 'erro': None}
     return render(request, 'checkout.html', context)
@@ -210,11 +215,41 @@ def finalizar_pedido(request, id_pedido):
             return render(request, 'checkout.html', context)
         else:
             itens_pedido = ItensPedido.objects.filter(pedido=pedido)
-            link = ''
-            criar_pagamento(itens_pedido, link)
-            return redirect('checkout', erro)
+            link = request.build_absolute_uri(reverse('finalizar_pagamento'))
+            link_pagamento, id_pagamento = criar_pagamento(itens_pedido, link)
+            pagamento = Pagamento.objects.create(id_pagamento=id_pagamento, pedido=pedido)
+            pagamento.save()
+            return redirect(link_pagamento)
     else:
         return redirect('loja')
+
+
+def finalizar_pagamento(request):
+    dados = request.GET.dict()
+    status = dados.get('status')
+    id_pagamento = dados.get('preference_id')
+    if status == 'approved':
+        pagamento = Pagamento.objects.get(id_pagamento=id_pagamento)
+        pagamento.aprovado = True
+        pedido = pagamento.pedido
+        pedido.finalizado = True
+        pedido.data_finalizacao = datetime.now()
+        pedido.save()
+        pagamento.save()
+        enviar_email_compra(pedido)
+        if request.user.is_authenticated:
+            return redirect('meus_pedidos')
+        else:
+            return redirect('pedido_aprovado', pedido.id)
+    else:
+        return redirect('checkout')
+
+
+
+def pedido_aprovado(request, id_pedido):
+    pedido = Pedido.objects.get(id=id_pedido)
+    context = {'pedido': pedido}
+    return render(request, 'pedido_aprovado.html', context)
 def adicionar_endereco(request):
     if request.method == 'POST':
         if request.user.is_authenticated:
@@ -369,3 +404,10 @@ def criar_conta(request):
 def fazer_lougout(request):
     logout(request)
     return redirect('fazer_login')
+
+@login_required
+def gerenciar_loja(request):
+    if request.user.groups.filter(name="equipe").exists():
+        return render(request, "interno/gerenciar_loja.html")
+    else:
+        redirect('loja')
