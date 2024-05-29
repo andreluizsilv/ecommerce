@@ -31,4 +31,50 @@
         <a href="{% url 'password_reset' %}">Esqueci minha Senha</a>
     </div>
 </div>
+
+ <main class="principal">
+      <section class="conta">
+
+        <div class="conta__container">
+          <div class="checkout__titulos">
+            <p class="checkout__titulo">Dados pessoais</p>
+          </div>
+             {% if erro == 'email_existente' %}
+                <p>Já Existe um Usuário com esse Email</p>
+             {% endif %}
+
+          <form
+            class="conta__form"
+            action="{% url 'minha_conta' %}"
+            method="post"
+          >
+          {% csrf_token %}
+            <div class="conta__item">
+              <label for="nome">Nome</label>
+              <input name="nome" type="text" laceholder="Nome Completo"
+                    {% if request.user.cliente.nome_cliente %}
+                    value="{{ request.user.cliente.nome_cliente }}"
+                    {% endif %} />
+            </div>
+
+            <div class="conta__item conta__item--email">
+              <label for="email">E-mail</label>
+              <input name="email" type="email" placeholder="Email" value="{{ request.user.email }}" />
+            </div>
+
+            <div class="conta__item">
+              <label for="telefone">Telefone</label>
+              <input name="telefone" type="number" placeholder="Telefone" value="{{ request.user.cliente.telefone }}"/>
+            </div>
+
+            <button class="subtotal__botao" type="submit">
+              Salvar alterações
+            </button>
+          </form>
+            <a href="{% url 'criar_conta' %}">Não tem conta? Criar Conta</a><br>
+            <a href="{% url 'password_reset' %}">Esqueci minha Senha</a>
+        </div>
+
+      </section>
+    </main>
 {% endblock %}

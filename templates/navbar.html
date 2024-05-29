@@ -60,9 +60,9 @@
       <div class="cabecalho__icone-login">
         <!-- Para trocar o ícone basta adicionar a classe 'cabecalho__link-icone--logado' na âncora abaixo -->
         {% if request.user.is_authenticated %}
-        <a class="cabecalho__link-icone cabecalho__link-icone--logado" href="javascript: void(0)">
+          <a class="cabecalho__link-icone cabecalho__link-icone--logado" href="javascript: void(0)">
         {% else %}
-        <a class="cabecalho__link-icone" href="{% url 'fazer_login' %}">
+          <a class="cabecalho__link-icone" href="{% url 'fazer_login' %}">
         {% endif %}
           <svg class="cabecalho__icone" xmlns="http://www.w3.org/2000/svg">
             <path
