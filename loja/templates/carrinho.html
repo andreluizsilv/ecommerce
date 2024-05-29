@@ -1,0 +1,41 @@
+{% extends 'base.html' %}
+{% load static %}
+{% block content %}
+    <h3>Sacola</h3>
+    {% if pedido %}
+        <h4>Número do Pedido: {{ pedido.id }}</h4>
+        <p>Total de Produtos: {{ pedido.qtde_total }}</p>
+        <p>Total das Compras: R${{ pedido.preco_total }}</p>
+        {% for item in pedido.itenspedido_set.all %}
+            <p>
+                <img src="{{ item.item_estoque.produto.imagem.url }}" width="50" height="70">
+                Produto: {{ item.item_estoque.produto.nome_produto }};
+                Cor: {{ item.item_estoque.cor.nome }};
+                Tamanho: {{ item.item_estoque.tamanho }}
+                <div style="display: flex;">
+                    Quantidade:
+                    <form method="POST" action="{% url 'remover_carrinho' item.item_estoque.produto.id %}">
+                        {% csrf_token %}
+                        <input type="hidden" name="tamanho" value="{{ item.item_estoque.tamanho }}">
+                        <input type="hidden" name="cor" value="{{ item.item_estoque.cor.id }}">
+                        <button type="submit">-</button>
+                    </form>
+                    {{ item.quantidade }}
+                    <form method="POST" action="{% url 'adicionar_carrinho' item.item_estoque.produto.id %}">
+                        {% csrf_token %}
+                        <input type="hidden" name="tamanho" value="{{ item.item_estoque.tamanho }}">
+                        <input type="hidden" name="cor" value="{{ item.item_estoque.cor.id }}">
+                        <button type="submit">+</button>
+                    </form>
+                </div>
+                Preço Unitário: R${{ item.item_estoque.produto.preco }}
+                Preço Total: R${{ item.preco_total }}
+            </p>
+            <hr>
+        {% endfor %}
+        <a href="{% url 'checkout' %}">Checkout</a>
+    {% else %}
+        <h3>Sua Sacola está Vazia</h3>
+        <a href="{% url 'loja' %}">Visite nossa Loja!</a>
+    {% endif %}
+{% endblock %}

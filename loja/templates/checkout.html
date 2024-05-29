@@ -3,7 +3,7 @@
 {% block content %}
 
 <h3>Checkout</h3>
-<a href="{% url 'sacola' %}">Voltar para Sacola</a>
+<a href="{% url 'carrinho' %}">Voltar para Sacola</a>
 
 <h4>Número Pedido: {{ pedido.id }}</h4>
 <p>Preço Total Pedido: R${{ pedido.preco_total }}</p>
@@ -11,7 +11,7 @@
 
 {% if ero %}
     {% if erro == 'preco' %}
-        <a href="{% url 'sacola' %}"><p>Preço dos Produtos Errado, Tente Novamente ou Volte para a Sacola!</p></a>
+        <a href="{% url 'carrinho' %}"><p>Preço dos Produtos Errado, Tente Novamente ou Volte para a Sacola!</p></a>
     {% endif %}
 
     {% if erro == 'endereco' %}

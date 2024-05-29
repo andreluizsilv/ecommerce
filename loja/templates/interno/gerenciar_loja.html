@@ -5,5 +5,11 @@
 
     <h3>Gerenciar Loja</h3>
 
-
+    <p> Faturamento: {{ faturamento }}</p>
+    <p> Produtos Vendidos: {{ qtde_produtos }}</p>
+    <p> Total Pedidos: {{ qtde_pedidos }}</p>
+    <hr>
+    <a href="{% url 'exportar_relatorio' 'pedido' %}"> Exportar Pedidos</a>
+    <a href="{% url 'exportar_relatorio' 'cliente' %}"> Exportar Clientes</a>
+    <a href="{% url 'exportar_relatorio' 'endereco' %}"> Exportar Enderecos </a>
 {% endblock %}
