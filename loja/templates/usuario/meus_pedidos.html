@@ -2,24 +2,51 @@
 {% load static %}
 
 {% block content %}
-<h3>Meus pedidos</h3>
-<a href="{% url 'minha_conta' %}">Minha Conta</a>
+   <main class="principal">
+      <section class="conta">
+        <div class="conta__container">
+          <div class="checkout__titulos">
+            <p class="checkout__titulo">Meus pedidos</p>
+          </div>
+          {% for pedido in pedidos %}
+            <div class="pedido">
+            <div class="pedido__cabecalho">
+              <div>
+                <p><b>Data do pedido</b></p>
+                <p>{{ pedido.data_finalizacao }}</p>
+              </div>
 
-{% for pedido in pedidos %}
-<div style="display: flex; flex-direction: column; margin-bottom: 20px; border: 1px solid #ddd; padding: 10px;">
-    <p>Data: {{ pedido.data_finalizacao }}</p>
-    <p>ID Pedido: {{ pedido.id }}</p>
-    <p>Código Transação: {{ pedido.codigo_transacao }}</p>
-    <p>Preço: {{ pedido.preco_total }}</p>
-    <p>Endereço: {{ pedido.endereco.cep }}, {{ pedido.endereco.cidade }} - {{ pedido.endereco.estado }}</p>
-    {% for item in pedido.itenspedido_set.all %}
-        <img src="{{ item.item_estoque.produto.imagem.url }}" width="50" height="70" alt="{{ item.item_estoque.produto.nome_produto }}">
-        <p>Produto: {{ item.item_estoque.produto.nome_produto }}</p>
-        <p>Quantidade: {{ item.quantidade }}</p>
-        <p>Preço: {{ item.preco_total }}</p>
+              <div>
+                <p><b>Total</b></p>
+                <p>R${{ pedido.preco_total }}</p>
+              </div>
 
-    {% endfor %}
-</div>
-<hr>
-{% endfor %}
+              <div>
+                <p><b>Número do pedido</b></p>
+                <p>{{ pedido.codigo_transacao }}</p>
+              </div>
+            </div>
+
+            <div class="pedido__corpo">
+
+               {% for item in pedido.itens %}
+                  <div class="tabela__imagem">
+                    <img
+                      src="{{ item.item_estoque.produto.imagem.url }}"
+                      alt="{{ item.item_estoque.produto.nome_produto }}"
+                    />
+                  </div>
+                  <div class="tabela__produto-textos">
+                <p><b>{{ item.item_estoque.produto.nome_produto }}</b></p>
+                <p><b>Quantidade:</b> {{ item.quantidade }}</p>
+                <p><b>Preço: R$</b> {{ item.preco_total }}</p>
+              </div>
+               {% endfor %}
+            </div>
+          </div>
+          <p>Endereço: {{ pedido.endereco.cep }}, {{ pedido.endereco.cidade }} - {{ pedido.endereco.estado }}</p>
+          {% endfor %}
+        </div>
+      </section>
+    </main>
 {% endblock %}
