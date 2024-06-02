@@ -2,11 +2,23 @@
 {% load static %}
 
 {% block content %}
-    <h1>Homepage</h1>
 
-    {% for banner in banners %}
-        <a href="{% url 'loja' %}{{ banner.links_destino }}">
-        <img src="{{ banner.imagem_baner.url }}"></a>
-    {% endfor %}
+    <main class="principal">
+
+      <section class="banner-grid">
+        {% for banner in banners %}
+        <a
+          href="{% url 'loja' %}{{ banner.links_destino }}"
+          class="banner-grid__imagem"
+        >
+          <img
+            src="{{ banner.imagem_baner.url }}"
+            alt="Banner 1"
+          />
+        </a>
+        {% endfor %}
+      </section>
+
+    </main>
 {% endblock %}
 

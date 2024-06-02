@@ -1,0 +1,15 @@
+asgiref==3.8.1
+certifi==2024.2.2
+charset-normalizer==3.3.2
+checkout==0.2.0
+Django==5.0.6
+gunicorn==22.0.0
+idna==3.7
+mercadopago==2.2.1
+packaging==24.0
+pillow==10.3.0
+requests==2.31.0
+sqlparse==0.5.0
+typing_extensions==4.11.0
+urllib3==2.2.1
+whitenoise==6.6.0

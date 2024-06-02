@@ -386,7 +386,7 @@ def gerenciar_loja(request):
         pedidos_finalizados = Pedido.objects.filter(finalizado=True)
         qtde_pedidos = len(pedidos_finalizados)
         faturamento = sum(pedido.preco_total for pedido in pedidos_finalizados)
-        qtde_produtos = sum(pedido.quantidade_total for pedido in pedidos_finalizados)
+        qtde_produtos = sum(pedido.qtde_total for pedido in pedidos_finalizados)
         context = {"qtde_pedidos": qtde_pedidos, "qtde_produtos": qtde_produtos, "faturamento": faturamento}
         return render(request, "interno/gerenciar_loja.html", context=context)
     else:
