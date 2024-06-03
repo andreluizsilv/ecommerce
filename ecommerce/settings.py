@@ -23,7 +23,7 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 SECRET_KEY = 'django-insecure-$nzeklfx2z++dppl6_ygx@ea5-)i-)v_*h_%bgx_nd+89=totc'
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = True
+DEBUG = False
 
 ALLOWED_HOSTS = ['*']
 
@@ -86,11 +86,11 @@ DATABASES = {
 }
 import dj_database_url
 
-DATABASE_URL = os.getenv('DATABASE_PRIVATE_URL')
+DATABASE_URL = os.getenv("DATABASE_URL")
 if DATABASE_URL:
-    DATABASES = {
-        'default': dj_database_url.config(default=DATABASE_URL, conn_max_age=1800)
-    }
+    DATABASES['default'] = dj_database_url.config(default=DATABASE_URL, conn_max_age=1800)
+
+
 
 # Password validation
 # https://docs.djangoproject.com/en/5.0/ref/settings/#auth-password-validators
