@@ -10,7 +10,7 @@ SECRET_KEY = 'django-insecure-$nzeklfx2z++dppl6_ygx@ea5-)i-)v_*h_%bgx_nd+89=totc
 
 DEBUG = True
 
-ALLOWED_HOSTS = ['ecommerce-production-57dd.up.railway.app', 'localhost', '127.0.0.1']
+ALLOWED_HOSTS = ['ecommerce-production-bd4d.up.railway.app', 'localhost', '127.0.0.1']
 
 INSTALLED_APPS = [
     'django.contrib.admin',
