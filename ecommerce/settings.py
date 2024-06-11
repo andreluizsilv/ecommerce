@@ -121,7 +121,7 @@ RECIPIENT_EMAIL = "milindobruto2@gmail.com"
 
 # Configurações de segurança
 CSRF_TRUSTED_ORIGINS = [
-    'https://ecommerce-production-bd4d.up.railway.app/'
+    'https://ecommerce-production-bd4d.up.railway.app'
 ]
 CSRF_COOKIE_SECURE = True
 SESSION_COOKIE_SECURE = True
