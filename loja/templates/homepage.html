@@ -6,7 +6,7 @@
         <section class="banner-grid">
             {% for banner in banners %}
             <a href="{% url 'loja' %}{{ banner.links_destino }}" class="banner-grid__imagem">
-                <img src="{{ banner.imagem_baner.url }}" alt="Banner {{ forloop.counter }}">
+                <img src="{% static 'images/' %}{{ banner.imagem_baner.name }}" alt="Banner {{ forloop.counter }}">
             </a>
             {% endfor %}
         </section>

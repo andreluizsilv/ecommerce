@@ -14,7 +14,6 @@ from .api_mercadopago import criar_pagamento
 # Create your views here.
 def homepage(request):
     banners = Banner.objects.filter(ativo=True)
-    print(banners)
     context = {"banners": banners}
     return render(request, 'homepage.html', context)
 
@@ -304,7 +303,7 @@ def minha_conta(request):
 @login_required
 def meus_pedidos(request):
     cliente = request.user.cliente
-    pedidos = Pedido.objects.filter(finalizado=True, cliente=cliente).order_by("-data_finalizacao")
+    pedidos = Pedido.objects.filter(finalizado=False, cliente=cliente).order_by("-data_finalizacao")
     print(pedidos)
     context = {"pedidos": pedidos}
     return render(request, "usuario/meus_pedidos.html", context)

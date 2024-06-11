@@ -32,10 +32,11 @@
                {% for item in pedido.itens %}
                   <div class="tabela__imagem">
                     <img
-                      src="{{ item.item_estoque.produto.imagem.url }}"
-                      alt="{{ item.item_estoque.produto.nome_produto }}"
+                        src="{% static 'images/' %}{{ item.item_estoque.produto.imagem.name }}"
+                        alt="{{ item.item_estoque.produto.nome_produto }}"
                     />
-                  </div>
+                    </div>
+
                   <div class="tabela__produto-textos">
                 <p><b>{{ item.item_estoque.produto.nome_produto }}</b></p>
                 <p><b>Quantidade:</b> {{ item.quantidade }}</p>

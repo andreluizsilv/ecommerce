@@ -166,7 +166,7 @@
             >
               <div class="produto__imagem">
                 <img
-                  src="{{ produto.imagem.url }}"
+                  src="{% static 'images/' %}{{ produto.imagem.name }}"
                   alt="Imagem do Produto"
                 />
               </div>
