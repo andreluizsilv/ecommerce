@@ -14,6 +14,7 @@ from .api_mercadopago import criar_pagamento
 # Create your views here.
 def homepage(request):
     banners = Banner.objects.filter(ativo=True)
+    print(banners)
     context = {"banners": banners}
     return render(request, 'homepage.html', context)
 

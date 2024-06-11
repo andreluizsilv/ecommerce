@@ -10,7 +10,7 @@ SECRET_KEY = 'django-insecure-$nzeklfx2z++dppl6_ygx@ea5-)i-)v_*h_%bgx_nd+89=totc
 
 DEBUG = True
 
-ALLOWED_HOSTS = ['ecommerce-production-bd4d.up.railway.app', 'localhost', '127.0.0.1']
+ALLOWED_HOSTS = ['ecommerce-production-bd4d.up.railway.app', '127.0.0.1']
 
 INSTALLED_APPS = [
     'django.contrib.admin',
@@ -93,16 +93,21 @@ USE_I18N = True
 
 USE_TZ = True
 
-STATIC_ROOT = BASE_DIR / 'staticfiles'
 STATIC_URL = '/static/'
 
+STATIC_ROOT = BASE_DIR / "staticfiles"
+
 STATICFILES_DIRS = [
-    os.path.join(BASE_DIR, 'static')
+    os.path.join(BASE_DIR, "static")
 ]
-STATICFILES_STORAGE = 'whitenoise.storage.CompressedManifestStaticFilesStorage'
 
 MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
+
+
 MEDIA_URL = '/media/'
+
+STATICFILES_STORAGE = 'whitenoise.storage.CompressedManifestStaticFilesStorage'
+
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
@@ -118,7 +123,7 @@ RECIPIENT_EMAIL = "milindobruto2@gmail.com"
 
 # Configurações de segurança
 CSRF_TRUSTED_ORIGINS = [
-    'https://ecommerce-production-57dd.up.railway.app'
+    'https://ecommerce-production-bd4d.up.railway.app/'
 ]
 CSRF_COOKIE_SECURE = True
 SESSION_COOKIE_SECURE = True
