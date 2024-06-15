@@ -2014,6 +2014,13 @@ img {
 }
 .checkout__secao-entrega-login {
   display: flex;
+    max-width: none;
+  }
+}
+.checkout__secao-entrega-login--logado .checkout__secao-login {
+  display: none;
+}
+.checkout__secao-entrega-login--logado .checkout__endereco
   flex-flow: column nowrap;
   align-items: stretch;
   justify-content: start;
@@ -2022,14 +2029,7 @@ img {
   max-width: 55rem;
 }
 @media (max-width: 46.875em) {
-  .checkout__secao-entrega-login {
-    max-width: none;
-  }
-}
-.checkout__secao-entrega-login--logado .checkout__secao-login {
-  display: none;
-}
-.checkout__secao-entrega-login--logado .checkout__endereco-cadastrado {
+  .checkout__secao-entrega-login {-cadastrado {
   display: flex;
 }
 .checkout__secao-pagamento-infos {

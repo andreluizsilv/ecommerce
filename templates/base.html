@@ -17,9 +17,14 @@
 </head>
 <body>
     {% include 'navbar.html' %}
+    {% include 'aviso.html' %}
     {% block content%}
-
-    {% endblock %}
+        <div id="avisoModal" class="modal">
+            <div class="modal-content">
+                <span class="close">&times;</span>
+                <p>Este site é meramente instrutivo, para fins educativos.</p>
+            </div>
+        </div>      {% endblock %}
 
     {% include 'rodape.html' %}
     <script type="text/javascript" src="{% static 'js/checkout.js' %}"></script>
