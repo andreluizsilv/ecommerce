@@ -6,7 +6,7 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 
 SECRET_KEY = 'django-insecure-$nzeklfx2z++dppl6_ygx@ea5-)i-)v_*h_%bgx_nd+89=totc'
 
-DEBUG = True
+DEBUG = False
 
 ALLOWED_HOSTS = ['ecommerce-production-bd4d.up.railway.app', '127.0.0.1']
 
