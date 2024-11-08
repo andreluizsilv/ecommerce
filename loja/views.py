@@ -1,4 +1,4 @@
-from django.shortcuts import render, redirect
+from django.shortcuts import render, redirect, get_object_or_404
 from django.urls import reverse
 from .models import *
 import uuid
@@ -7,6 +7,7 @@ from django.contrib.auth import login, logout, authenticate
 from django.contrib.auth.decorators import login_required
 from django.core.validators import validate_email
 from django.core.exceptions import ValidationError
+from .cartao import gerar_cartao_cliente
 from datetime import datetime
 from .api_mercadopago import criar_pagamento
 
@@ -152,6 +153,52 @@ def checkout(request):
     enderecos = Endereco.objects.filter(cliente=cliente)
     context = {"pedido": pedido, "enderecos": enderecos, "erro": None}
     return render(request, 'checkout.html', context)
+
+
+def criar_cartao(request):
+    if request.user.is_authenticated:
+        try:
+            cliente = Cliente.objects.get(usuario=request.user)  # Usando o usuário logado
+            cartao = gerar_cartao_cliente(cliente.id)  # Gera o cartão
+            return redirect('detalhes_cartao', cartao_id=cartao.id)  # Redireciona para uma página de detalhes do cartão ou para o checkout
+        except Cliente.DoesNotExist:
+            return redirect('minha_conta')  # Redireciona para a página de conta do usuário caso não encontre o cliente
+        except Exception as e:
+            # Loga o erro (exemplo com log)
+            print(f"Erro ao criar cartão: {e}")
+            # Pode adicionar uma mensagem de erro para o usuário
+            context = {"erro": "Houve um problema ao criar seu cartão. Tente novamente."}
+            return render(request, 'erro.html', context)
+    else:
+        return redirect('login')  # Caso o usuário não esteja autenticado, redireciona para o login
+
+def detalhes_cartao(request, cartao_id):
+    try:
+        cartao = Cartao.objects.get(id=cartao_id)
+        print(cartao)
+        return render(request, 'detalhes_cartao.html', {'cartao': cartao})
+    except Cartao.DoesNotExist:
+        return redirect('checkout')  # Redireciona para o checkout se o cartão não for encontrado
+
+
+
+def definir_score_credito(request, cliente_id):
+    cliente = get_object_or_404(Cliente, id=cliente_id)
+    cartao, created = Cartao.objects.get_or_create(cliente=cliente)
+
+    if request.method == 'POST':
+        score_credito = request.POST.get('score_credito')
+        if score_credito and score_credito.isdigit():
+            score_credito = int(score_credito)
+            cartao.score_credito = score_credito
+            cartao.limite_compra = score_credito * 10  # Exemplo de cálculo
+            cartao.save()
+            return redirect('pagina_de_confirmacao')  # Redireciona após salvar
+        else:
+            # Mensagem de erro caso o score não seja válido
+            return render(request, 'definir_score.html', {'error': 'Score inválido. Insira um número.', 'cliente': cliente})
+
+    return render(request, 'definir_score.html', {'cliente': cliente})
 
 
 def finalizar_pedido(request, id_pedido):

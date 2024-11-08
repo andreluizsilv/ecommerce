@@ -105,17 +105,10 @@
 
                 <div class="checkout__pagamento-formas">
                   <div class="checkout__pagamento-item">
-                    <p for="cartao_credito">Cartão de Crédito</p>
+                    <p for="cartao_credito">
+                      <a href="{% url 'criar_cartao' %}" class="checkout__botao checkout__botao--cartao">Criar Cartão de Crédito</a>
+                    </p>
                   </div>
-
-                  <div class="checkout__pagamento-item">
-                    <p for="boleto">Boleto</p>
-                  </div>
-
-                  <div class="checkout__pagamento-item">
-                    <p for="pix">PIX</p>
-                  </div>
-
                 </div>
               </div>
 

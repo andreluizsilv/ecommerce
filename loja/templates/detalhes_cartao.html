@@ -1,0 +1,12 @@
+{% extends 'base.html' %}
+{% load static %}
+{% block content %}
+  <h1>Detalhes do Cartão</h1>
+
+  <p><strong>Nome do Cliente:</strong> {{ cartao.cartao_cliente.nome_cliente }}</p>
+  <p><strong>Número do Cartão:</strong> {{ cartao.numero_cartao }}</p>
+  <p><strong>Validade:</strong> {{ cartao.validade_cartao }}</p>
+
+  <img src="{{ cartao.images_cartao.url }}" alt="Imagem do Cartão">
+
+{% endblock %}

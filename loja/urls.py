@@ -1,8 +1,8 @@
 from django.conf import settings
 from django.conf.urls.static import static
 from django.urls import path
-from django.contrib.auth import views
 from .views import *
+from django.contrib.auth import views
 
 urlpatterns = [
     path('', homepage, name='homepage'),
@@ -31,6 +31,9 @@ urlpatterns = [
     path('password_reset/done/', views.PasswordResetDoneView.as_view(), name='password_reset_done'),
     path('reset/<uidb64>/<token>/', views.PasswordResetConfirmView.as_view(), name='password_reset_confirm'),
     path('reset/done/', views.PasswordResetCompleteView.as_view(), name='password_reset_complete'),
+    path('criar-cartao/', criar_cartao, name='criar_cartao'),
+    path('cartao/detalhes/<int:cartao_id>/', detalhes_cartao, name='detalhes_cartao'),
+
 ]
 
 if settings.DEBUG:

@@ -1,4 +1,4 @@
-import mercadopago
+#import mercadopago
 
 public_key = 'TEST-782abbf2-028c-4c73-889c-e4304757293b'
 access_token = 'TEST-6553658564379008-052411-d2fe2367d296076447945a1f9ca91c41-630114112'

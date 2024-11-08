@@ -11,6 +11,17 @@ class Cliente(models.Model):
     def __str__(self):
         return self.email if self.email else "Cliente sem email"
 
+class Cartao(models.Model):
+    cartao_cliente = models.ForeignKey(Cliente, null=True, blank=True, on_delete=models.SET_NULL)
+    numero_cartao = models.CharField(max_length=200, null=True, blank=True)
+    images_cartao = models.ImageField(null=True, blank=True)
+    validade_cartao = models.CharField(max_length=5, null=True, blank=True)
+    score_credito = models.IntegerField(null=True, blank=True)
+    limite_compra = models.DecimalField(max_digits=10, decimal_places=2, null=True, blank=True)
+
+    def __str__(self):
+        return f"Cartão de {self.cliente.nome_cliente} - Limite: {self.limite_compra}"
+
 class Categoria(models.Model):
     nome = models.CharField(max_length=200, null=True, blank=True)
     slug = models.SlugField(max_length=200, null=True, blank=True)

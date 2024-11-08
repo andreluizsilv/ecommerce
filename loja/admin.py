@@ -3,6 +3,7 @@ from .models import *
 
 # Register your models here.
 admin.site.register(Cliente)
+admin.site.register(Cartao)
 admin.site.register(Categoria)
 admin.site.register(Tipo)
 admin.site.register(Produto)
