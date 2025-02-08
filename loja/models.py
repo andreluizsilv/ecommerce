@@ -1,5 +1,7 @@
 from django.db import models
 from django.contrib.auth.models import User
+from django.core.exceptions import ValidationError
+
 
 class Cliente(models.Model):
     nome_cliente = models.CharField(max_length=200, null=True, blank=True)
@@ -8,8 +10,20 @@ class Cliente(models.Model):
     id_sessao = models.CharField(max_length=200, null=True, blank=True)
     usuario = models.OneToOneField(User, null=True, blank=True, on_delete=models.CASCADE)
 
+    def clean(self):
+        if Cartao.objects.filter(cartao_cliente=self.cartao_cliente).exists():
+            raise ValidationError("Este cliente já possui um cartão registrado.")
+
     def __str__(self):
-        return self.email if self.email else "Cliente sem email"
+        if self.nome_cliente and self.email:
+            return f"{self.nome_cliente} - {self.email}"
+        elif self.nome_cliente:
+            return self.nome_cliente
+        elif self.email:
+            return self.email
+        else:
+            return "Cliente sem nome e email"
+
 
 class Cartao(models.Model):
     cartao_cliente = models.ForeignKey(Cliente, null=True, blank=True, on_delete=models.SET_NULL)
@@ -20,7 +34,10 @@ class Cartao(models.Model):
     limite_compra = models.DecimalField(max_digits=10, decimal_places=2, null=True, blank=True)
 
     def __str__(self):
-        return f"Cartão de {self.cliente.nome_cliente} - Limite: {self.limite_compra}"
+        if self.cartao_cliente:
+            return f"Cartão de {self.cartao_cliente.nome_cliente} - Limite: {self.limite_compra}"
+        return "Cartão sem cliente associado - Limite: {}".format(self.limite_compra or "Indefinido")
+
 
 class Categoria(models.Model):
     nome = models.CharField(max_length=200, null=True, blank=True)

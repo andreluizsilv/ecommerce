@@ -7,10 +7,8 @@ from django.conf import settings
 import os
 from .models import Cliente, Cartao
 
-
 def gerar_numero_cartao():
     return ' '.join(f"{random.randint(1000, 9999)}" for _ in range(4))
-
 
 def gerar_cartao_cliente(cliente_id):
     try:
@@ -34,6 +32,12 @@ def gerar_cartao_cliente(cliente_id):
         # Cria a imagem do cartão
         imagem_cartao = Image.open(imagem_path)
 
+        # Redimensiona a imagem (ajuste as dimensões conforme necessário)
+        largura, altura = imagem_cartao.size
+        nova_largura = 6000  # Defina a largura desejada
+        nova_altura = int((nova_largura / largura) * altura)  # Mantém a proporção
+        imagem_cartao = imagem_cartao.resize((nova_largura, nova_altura))
+
         # Caminho absoluto para a fonte
         fonte_path = os.path.join(settings.BASE_DIR, 'static', 'images', 'Heavitas.ttf')
 
@@ -43,13 +47,13 @@ def gerar_cartao_cliente(cliente_id):
             return None
 
         # Carrega a fonte
-        fonte = ImageFont.truetype(fonte_path, 60)
+        fonte = ImageFont.truetype(fonte_path, 200)
 
         # Adiciona os textos na imagem
         draw = ImageDraw.Draw(imagem_cartao)
-        draw.text((150, 52), numero_cartao, font=fonte)
-        draw.text((150, 72), cliente.nome_cliente, font=fonte)
-        draw.text((150, 92), validade, font=fonte)
+        draw.text((2800, 1000), numero_cartao, font=fonte)
+        draw.text((2800, 1400), cliente.nome_cliente, font=fonte)
+        draw.text((2800, 1750), validade, font=fonte)
 
         # Salva a imagem diretamente na memória
         imagem_io = BytesIO()

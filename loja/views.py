@@ -3,7 +3,7 @@ from django.urls import reverse
 from .models import *
 import uuid
 from .utils import filtrar_produtos, preco_minimo_maximo, ordenar_produtos, enviar_email_compra, exportar_csv
-from django.contrib.auth import login, logout, authenticate
+from django.contrib.auth import login, logout, authenticate, update_session_auth_hash
 from django.contrib.auth.decorators import login_required
 from django.core.validators import validate_email
 from django.core.exceptions import ValidationError
@@ -158,48 +158,64 @@ def checkout(request):
 def criar_cartao(request):
     if request.user.is_authenticated:
         try:
-            cliente = Cliente.objects.get(usuario=request.user)  # Usando o usuário logado
+            cliente = Cliente.objects.get(usuario=request.user)  # Obtém o cliente pelo usuário logado
+
+            if not cliente.nome_cliente:
+                # Se o cliente não tiver nome, redireciona para a página de conta
+                return redirect('minha_conta')
+
+            # Verifica se o cliente já possui um cartão
+            if Cartao.objects.filter(cartao_cliente=cliente).exists():
+                # Se o cliente já tiver um cartão, redireciona para a página de detalhes do cartão existente
+                cartao_existente = Cartao.objects.get(cartao_cliente=cliente)
+                return redirect('detalhes_cartao', cartao_id=cartao_existente.id)
+
+            # Lógica para gerar o cartão
             cartao = gerar_cartao_cliente(cliente.id)  # Gera o cartão
-            return redirect('detalhes_cartao', cartao_id=cartao.id)  # Redireciona para uma página de detalhes do cartão ou para o checkout
+            return redirect('detalhes_cartao', cartao_id=cartao.id)  # Redireciona para a página de detalhes do cartão
         except Cliente.DoesNotExist:
-            return redirect('minha_conta')  # Redireciona para a página de conta do usuário caso não encontre o cliente
+            # Caso o cliente não seja encontrado, redireciona para a página de conta
+            return redirect('minha_conta')
         except Exception as e:
-            # Loga o erro (exemplo com log)
+            # Loga o erro e mostra uma página de erro
             print(f"Erro ao criar cartão: {e}")
-            # Pode adicionar uma mensagem de erro para o usuário
             context = {"erro": "Houve um problema ao criar seu cartão. Tente novamente."}
             return render(request, 'erro.html', context)
     else:
         return redirect('login')  # Caso o usuário não esteja autenticado, redireciona para o login
 
+
 def detalhes_cartao(request, cartao_id):
     try:
         cartao = Cartao.objects.get(id=cartao_id)
-        print(cartao)
-        return render(request, 'detalhes_cartao.html', {'cartao': cartao})
+        cliente = cartao.cartao_cliente  # Obtém o cliente associado ao cartão
+        return render(request, 'detalhes_cartao.html', {'cartao': cartao, 'cliente': cliente})
     except Cartao.DoesNotExist:
-        return redirect('checkout')  # Redireciona para o checkout se o cartão não for encontrado
+        return redirect('checkout')
 
 
 
 def definir_score_credito(request, cliente_id):
     cliente = get_object_or_404(Cliente, id=cliente_id)
-    cartao, created = Cartao.objects.get_or_create(cliente=cliente)
+    cartao, created = Cartao.objects.get_or_create(cartao_cliente=cliente)
 
     if request.method == 'POST':
         score_credito = request.POST.get('score_credito')
         if score_credito and score_credito.isdigit():
             score_credito = int(score_credito)
             cartao.score_credito = score_credito
-            cartao.limite_compra = score_credito * 10  # Exemplo de cálculo
+            cartao.limite_compra = score_credito * 10  # Exemplo de cálculo para o limite
             cartao.save()
-            return redirect('pagina_de_confirmacao')  # Redireciona após salvar
+            return redirect('pagina_de_confirmacao')  # Redireciona para uma página de confirmação
         else:
             # Mensagem de erro caso o score não seja válido
-            return render(request, 'definir_score.html', {'error': 'Score inválido. Insira um número.', 'cliente': cliente})
+            return render(request, 'definir_score.html', {
+                'error': 'Score inválido. Insira um número.',
+                'cliente': cliente,
+                'cartao': cartao,
+            })
 
-    return render(request, 'definir_score.html', {'cliente': cliente})
-
+    return render(request, 'definir_score.html', {'cliente': cliente, 'cartao': cartao})
 
 def finalizar_pedido(request, id_pedido):
     if request.method == "POST":
@@ -305,47 +321,58 @@ def adicionar_endereco(request):
 def minha_conta(request):
     erro = None
     alterado = False
+
     if request.method == "POST":
         dados = request.POST.dict()
+
+        # Verificação de alteração de senha
         if "senha_atual" in dados:
-            # esta modificando senha
             senha_atual = dados.get("senha_atual")
             nova_senha = dados.get("nova_senha")
             nova_senha_confirmacao = dados.get("nova_senha_confirmacao")
+
             if nova_senha == nova_senha_confirmacao:
-                # verificar se a senha atual ta certa
-                usuario = authenticate(request, username=request.user.email, password=senha_atual)
-                if usuario:
+                usuario = authenticate(request, username=request.user.username, password=senha_atual)
+
+                if usuario:  # Usuário autenticado corretamente
                     usuario.set_password(nova_senha)
                     usuario.save()
+                    update_session_auth_hash(request, usuario)  # Mantém o usuário logado
                     alterado = True
                 else:
-                    erro = "senha_incorreta"
+                    erro = "Senha atual incorreta."
             else:
-                erro = "senhas_diferentes"
-        elif "email" in dados:
-            email = dados.get("email")
-            telefone = dados.get("telefone")
-            nome = dados.get("nome")
-            if email != request.user.email:
-                usuarios = User.objects.filter(email=email)
-                if len(usuarios) > 0:
-                    erro = "email_existente"
+                erro = "As senhas não conferem."
+
+        # Verificação de alteração de email, nome e telefone
+        elif "email" in dados or "nome" in dados or "telefone" in dados:
+            email = dados.get("email", request.user.email)
+            telefone = dados.get("telefone", request.user.cliente.telefone)
+            nome = dados.get("nome", request.user.cliente.nome_cliente)
+
+            # Verifica se o email foi alterado e se já está em uso por outro usuário
+            if email != request.user.email and User.objects.filter(email=email).exclude(id=request.user.id).exists():
+                erro = "Este email já está em uso."
+
+            # Se não houver erro, salva as alterações no modelo Cliente e no User
             if not erro:
                 cliente = request.user.cliente
-                cliente.email = email
-                request.user.email = email
-                request.user.username = email
-                cliente.nome = nome
+                cliente.nome_cliente = nome
                 cliente.telefone = telefone
                 cliente.save()
+
+                request.user.email = email
+                request.user.username = email  # Atualiza o username para o novo email
                 request.user.save()
+
                 alterado = True
+
+        # Caso o formulário esteja incompleto ou inválido
         else:
-            erro = "formulario_invalido"
+            erro = "Formulário inválido. Tente novamente."
+
     context = {"erro": erro, "alterado": alterado}
     return render(request, 'usuario/minha_conta.html', context)
-
 
 @login_required
 def meus_pedidos(request):

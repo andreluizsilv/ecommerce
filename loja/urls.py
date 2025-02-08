@@ -33,6 +33,7 @@ urlpatterns = [
     path('reset/done/', views.PasswordResetCompleteView.as_view(), name='password_reset_complete'),
     path('criar-cartao/', criar_cartao, name='criar_cartao'),
     path('cartao/detalhes/<int:cartao_id>/', detalhes_cartao, name='detalhes_cartao'),
+    path('definir-score/<int:cliente_id>/', definir_score_credito, name='definir_score_credito'),
 
 ]
 
