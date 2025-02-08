@@ -28,7 +28,7 @@ SECRET_KEY = os.environ.get('SECRET_KEY', 'django-insecure-p+(97%aqf5&hq23tl4^f#
 DEBUG = True
 
 ALLOWED_HOSTS = [
-    'ecommerce-production-bd4d.up.railway.app',  # Domínio do Railway
+    'htps://ecommerce-production-bd4d.up.railway.app',  # Domínio do Railway
     'localhost',  # Para desenvolvimento local
     '127.0.0.1',  # Para desenvolvimento local
 ]
