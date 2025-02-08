@@ -4,11 +4,21 @@ import dj_database_url
 
 BASE_DIR = Path(__file__).resolve().parent.parent
 
-SECRET_KEY = 'django-insecure-$nzeklfx2z++dppl6_ygx@ea5-)i-)v_*h_%bgx_nd+89=totc'
+SECRET_KEY = os.environ.get('SECRET_KEY', 'django-insecure-$nzeklfx2z++dppl6_ygx@ea5-)i-)v_*h_%bgx_nd+89=totc')
+
+
+CSRF_TRUSTED_ORIGINS = [
+    'https://ecommerce-production-bd4d.up.railway.app',  # Domínio do Railway
+]
 
 DEBUG = False
 
-ALLOWED_HOSTS = ['ecommerce-production-bd4d.up.railway.app', '127.0.0.1']
+ALLOWED_HOSTS = [
+    'https://ecommerce-production-bd4d.up.railway.app/',  # Domínio do Railway
+    'localhost',  # Para desenvolvimento local
+    '127.0.0.1',  # Para desenvolvimento local
+]
+
 
 INSTALLED_APPS = [
     'django.contrib.admin',
